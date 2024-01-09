@@ -13,7 +13,7 @@ Stability   : experimental
 module Graphics.Polydraw.Unicode where
 
 import Data.Semigroup ((<>))
-import Graphics.OpenSCAD
+import Graphics.Polydraw
 
 infixl 6 ∪
 infixr 6 ∩

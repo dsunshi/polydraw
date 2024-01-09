@@ -1,7 +1,7 @@
 cabal-version:       3.0
 name:                polydraw
 version:             0.1.1
-license:             BSD3
+license:             BSD-4-Clause
 license-file:        LICENSE
 author:              D. Sunshine
 maintainer:          david@sunshines.org
@@ -13,14 +13,11 @@ common warnings
     ghc-options: -Wall
 
 library
+    import:             warnings
     exposed-modules:    Graphics.Polydraw, Graphics.Polydraw.Unicode
     default-extensions: FlexibleContexts
     other-extensions:   UnicodeSyntax
-    import:             warnings
---    main-is:            Main.hs
     build-depends:      base, containers, filepath, colour, hsnoise
-    hs-source-dirs:     src
-    other-modules:      Graphics.OpenSCAD, Tree, Land
     default-language:   Haskell2010
 
 source-repository head

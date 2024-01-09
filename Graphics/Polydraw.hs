@@ -131,7 +131,9 @@ import Data.Colour.Names as Colours
 import Data.Colour.SRGB (channelRed, channelBlue, channelGreen, toSRGB)
 import Data.List (elemIndices, nub, intercalate)
 import Data.List.NonEmpty (toList)
-import Data.Semigroup (Semigroup((<>), sconcat), Monoid(mconcat, mempty, mappend))
+import Data.Semigroup ((<>), sconcat)
+import Data.Monoid(mconcat, mempty, mappend)
+import qualified Data.Set as Set
 import System.FilePath (FilePath)
 
 -- A vector in 2 or 3-space. They are used in transformations of
