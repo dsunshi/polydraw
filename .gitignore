@@ -1,0 +1,6 @@
+dist-newstyle/
+*.scad
+*.png
+*.stl
+*.gcode
+polydraw
