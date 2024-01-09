@@ -1,15 +1,16 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
 {-
-Module      : Graphics.OpenSCAD.Unicode
+Module      : Graphics.Polydraw.Unicode
 Description : Unicode operators so you can write 'Model' expressions.
-Copyright   : &#xa9; Mike Meyer, 2014
+Copyright   : David Sunshine, 2024
+              Mike Meyer, 2014
 License     : BSD4
-Maintainer  : mwm@mired.org
+Maintainer  : david@sunshines.org
 Stability   : experimental
 -}
 
-module Graphics.OpenSCAD.Unicode where
+module Graphics.Polydraw.Unicode where
 
 import Data.Semigroup ((<>))
 import Graphics.OpenSCAD

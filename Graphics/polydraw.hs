@@ -1,22 +1,23 @@
 {-# LANGUAGE MultiParamTypeClasses, FlexibleInstances #-}
 
 {- |
-Module      : Graphics.OpenSCAD
+Module      : Graphics.Polydraw
 Description : Type-checked wrappers for the OpenSCAD primitives.
-Copyright   : &#xa9; Mike Meyer, 2014
+Copyright   : David Sunshine, 2024
+              Mike Meyer, 2014
 License     : BSD4
-Maintainer  : mwm@mired.org
+Maintainer  : david@sunshines.org
 Stability   : experimental
 
 = Overview
 
-The Graphics.OpenSCAD module provides abstract data types for creating
+The Graphics.Polydraw module provides abstract data types for creating
 OpenSCAD model definitions calls, along with a function to render it
 as a string, and some utilities. The primary goal is that the output
 should always be valid OpenSCAD. If you manage to generate OpenSCAD
 source that causes OpenSCAD to complain, please open an issue.
 
-The primary affect of this is that Graphics.OpenSCAD distinguishes
+The primary affect of this is that Graphics.Polydraw distinguishes
 between 2d and 3d 'Model's. If you want to mix them, you must
 explicitly convert between them.  While two-dimensional model creation
 could be polymorphic functions that create either, so that such models
@@ -53,7 +54,7 @@ Because of this, the constructors are not documented, the exported
 functions are. The documentation is generally just the corresponding
 OpenSCAD function name, along with the names of the arguments from the
 OpenSCAD documentation. If no OpenSCAD function name is given, then
-it's the same as the 'Graphics.OpenSCAD' function. You should check
+it's the same as the 'Graphics.Polydraw' function. You should check
 the OpenSCAD documentation for usage information.
 
 = Oddities
@@ -82,7 +83,7 @@ where points = [.....]
 
 Also, the OpenSCAD polyedron code recently changed. The old version
 requires that the faces all be triangles, the new version allows for
-them to be arbitrary polygons. 'Graphics.OpenSCAD' supports both: if
+them to be arbitrary polygons. 'Graphics.Polydraw' supports both: if
 all your faces are triangles, it will use the old version. If some
 have more points, the new version will be used. If any have fewer than
 three points you get an error. At this time, no tests are done on the
@@ -95,7 +96,7 @@ export lists if you want to play with it.
 
 -}
 
-module Graphics.OpenSCAD (
+module Graphics.Polydraw (
   -- * Types
   -- ** A 'Model' to be rendered, and a 'Vector' that fixes the
   -- number of dimensions it has.
@@ -138,13 +139,13 @@ import System.FilePath (FilePath)
 class Vector a where
   rVector :: a -> String
 
--- | 'Vector2d' is used where 'Graphics.OpenSCAD' expects an OpenSCAD
+-- | 'Vector2d' is used where 'Graphics.Polydraw' expects an OpenSCAD
 -- @vector@ of length 2.
 type Vector2d = (Double, Double)
 instance Vector Vector2d where
   rVector (x, y) = "[" ++ show x ++ "," ++ show y ++ "]"
 
--- | 'Vector3d' is used where 'Graphics.OpenSCAD' expects an OpenSCAD
+-- | 'Vector3d' is used where 'Graphics.Polydraw' expects an OpenSCAD
 -- @vector@ of length 3.
 type Vector3d = (Double, Double, Double)
 instance Vector Vector3d where
@@ -357,7 +358,7 @@ mirror = Mirror
 
 -- | Render a 'Model' in a specific color. This doesn't use the
 -- OpenSCAD color model, but instead uses the 'Data.Colour' model. The
--- 'Graphics.OpenSCAD' module rexports 'Data.Colour.Names' so you can
+-- 'Graphics.Polydraw' module rexports 'Data.Colour.Names' so you can
 -- conveniently say @'color' 'red' /'Model'/@.
 color :: Vector v => Colour Double -> Model v -> Model v
 color = Color
@@ -368,7 +369,7 @@ transparent :: Vector v => AlphaColour Double -> Model v -> Model v
 transparent = Transparent
 
 -- | A 'translate' that just goes up, since those seem to be common.
-up :: Double -> Model3d -> Model3d 
+up :: Double -> Model3d -> Model3d
 up f = translate (0, 0, f)
 
 
@@ -541,7 +542,7 @@ instance Vector v => Monoid (Model v) where
   mappend a b = union [a, b]
   mconcat = union
 
--- | You can use '(#)' to write transformations in a more readable postfix form, 
+-- | You can use '(#)' to write transformations in a more readable postfix form,
 --   cube 3 # color red # translate (-3, -3, -3)
 infixl 8 #
 (#) = flip ($)
