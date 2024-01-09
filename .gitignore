@@ -4,3 +4,4 @@ dist-newstyle/
 *.stl
 *.gcode
 polydraw
+.HTF/
