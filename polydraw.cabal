@@ -1,0 +1,23 @@
+cabal-version:       3.0
+name:                polydraw
+version:             0.1.1
+license:             MIT
+license-file:        LICENSE
+author:              D. Sunshine
+maintainer:          david@sunshines.org
+category:            Graphics
+build-type:          Simple
+extra-source-files:  README.md
+
+common warnings
+    ghc-options: -Wall -Werror=incomplete-patterns
+
+executable Polydraw
+    import:             warnings
+    main-is:            Main.hs
+    other-modules:      Stl.Write
+    default-extensions: FlexibleContexts
+    other-extensions:   UnicodeSyntax
+    build-depends:      base, linear
+    hs-source-dirs:     src, src/Stl
+    default-language:   Haskell2010
