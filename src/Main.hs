@@ -4,10 +4,10 @@ import Linear.V3
 
 pyramid :: [Facet]
 pyramid = [
-            facet t u v, -- base
-            facet t u w,
-            facet u v w,
-            facet v t w
+            V3 t u v, -- base
+            V3 t u w,
+            V3 u v w,
+            V3 v t w
           ]
               where
                   t = V3 0 0 0

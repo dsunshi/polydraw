@@ -1,19 +1,40 @@
 
-module Stl.Write (Vertex, Facet, facet, renderStl) where
+module Stl.Write (Vertex, Facet, renderStl) where
 
 import Linear.V3
 import Text.Printf
 import Data.List
+import Data.Foldable
 
 type Vertex = V3 Double
+type Facet  = V3 Vertex
 
-data Facet = Facet Vertex Vertex Vertex
+renderStl :: [Facet] -> String
+renderStl fs = "solid \n" ++ intercalate "\n" (map renderFacet fs) ++ "\nendsolid"
 
-facet :: Vertex -> Vertex -> Vertex -> Facet
-facet = Facet
+renderFacet :: Facet -> String
+renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
+    "outer loop\n" ++
+    renderVerticies f ++
+    "endloop\nendfacet"
+        where
+            renderVerticies = foldMap (printf "vertex %s\n" . renderVertex)
 
-normal :: Vertex -> Vertex -> Vertex -> Vertex
-normal a b c = normalize $ cross (b - a) (c - a)
+renderVertex :: Vertex -> String
+renderVertex v = unwords (map renderDouble $ toList v)
+
+renderDouble :: Double -> String
+renderDouble n
+  | isInt precision n = printf "%d" (floor n :: Int)
+  | otherwise         = printf ("%." ++ show precision ++ "f") n
+    where precision   = 3
+
+-- Returns if x is an int to n decimal places
+isInt :: (RealFrac a) => Int -> a -> Bool
+isInt n x = round (10.0 ^ n * (x - fromIntegral (round x :: Int))) == (0 :: Int)
+
+normal :: Facet -> Vertex
+normal (V3 a b c) = normalize $ cross (b - a) (c - a)
 
 normalize :: Vertex -> Vertex
 normalize (V3 x y z) = V3 a b c
@@ -22,29 +43,3 @@ normalize (V3 x y z) = V3 a b c
         a = x / l
         b = y / l
         c = z / l
-
--- Returns if x is an int to n decimal places
-isInt :: (RealFrac a) => Int -> a -> Bool
-isInt n x = round (10.0 ^ n * (x - fromIntegral (round x :: Int))) == (0 :: Int)
-
-renderDouble :: Double -> String
-renderDouble n
-  | isInt precision n = printf "%d" (floor n :: Int)
-  | otherwise         = printf ("%." ++ show precision ++ "f") n
-    where precision   = 3
-
-renderVertex :: Vertex -> String
-renderVertex (V3 x y z) = renderDouble x ++ " " ++ renderDouble y ++ " " ++ renderDouble z
-
-renderFacet :: Facet -> String
-renderFacet (Facet a b c) = printf "facet normal %s\n" (renderVertex $ normalize $ normal a b c) ++
-    "outer loop\n" ++
-    printf "vertex %s\n" (renderVertex a) ++
-    printf "vertex %s\n" (renderVertex b) ++
-    printf "vertex %s\n" (renderVertex c) ++
-    "endloop\n" ++
-    "endfacet"
-
-renderStl :: [Facet] -> String
-renderStl fs = "solid \n" ++ intercalate "\n" (map renderFacet fs) ++ "\nendsolid"
-
