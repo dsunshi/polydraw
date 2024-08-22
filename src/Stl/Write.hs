@@ -14,9 +14,7 @@ renderStl fs = "solid \n" ++ intercalate "\n" (map renderFacet fs) ++ "\nendsoli
 
 renderFacet :: Facet -> String
 renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
-    "outer loop\n" ++
-    renderVerticies f ++
-    "endloop\nendfacet"
+    "outer loop\n" ++ renderVerticies f ++ "endloop\nendfacet"
         where
             renderVerticies = foldMap (printf "vertex %s\n" . renderVertex)
 

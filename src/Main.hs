@@ -11,11 +11,11 @@ pyramid = [
           ]
               where
                   t = V3 0 0 0
-                  u = V3 1 0 0
+                  u = V3 a 0 0
                   v = V3 (a/2) h 0
-                  w = V3 (a/2) (2 * h / 6) 1
-                  a = 1
+                  w = V3 (a/2) (2 * h / 6) a
                   h = a / 2 * sqrt 3
+                  a = 50
 
 main :: IO ()
 main = writeFile "pyramid.stl" $ renderStl pyramid
