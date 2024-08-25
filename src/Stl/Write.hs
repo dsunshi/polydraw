@@ -19,7 +19,7 @@ renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
             renderVerticies = foldMap (printf "vertex %s\n" . renderVertex)
 
 renderVertex :: Vertex -> String
-renderVertex v = unwords (map renderDouble $ toList v)
+renderVertex = unwords . toList . fmap renderDouble
 
 renderDouble :: Double -> String
 renderDouble n
