@@ -34,10 +34,5 @@ isInt n x = round (10.0 ^ n * (x - fromIntegral (round x :: Int))) == (0 :: Int)
 normal :: Facet -> Vertex
 normal (V3 a b c) = normalize $ cross (b - a) (c - a)
 
-normalize :: Vertex -> Vertex
-normalize (V3 x y z) = V3 a b c
-    where
-        l = sqrt (x * x + y * y + z * z)
-        a = x / l
-        b = y / l
-        c = z / l
+normalize :: V3 Double -> V3 Double
+normalize v = v / pure ( sqrt $ sum $ v * v)
