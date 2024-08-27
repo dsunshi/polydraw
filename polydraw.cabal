@@ -18,6 +18,6 @@ executable Polydraw
     other-modules:      Stl.Write
     default-extensions: FlexibleContexts
     other-extensions:   UnicodeSyntax
-    build-depends:      base, linear
+    build-depends:      base, linear, binary, bytestring, utf8-string
     hs-source-dirs:     src, src/Stl
     default-language:   Haskell2010

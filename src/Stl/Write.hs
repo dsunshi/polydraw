@@ -1,15 +1,43 @@
 
-module Stl.Write (Vertex, Facet, renderStl) where
+module Stl.Write (Vertex, Facet, Mesh, translate, up, writeStlB, renderStl) where
 
 import Linear.V3
 import Text.Printf
 import Data.List
 import Data.Foldable
 
+import qualified Data.ByteString.Lazy as BL
+import Data.ByteString.Lazy.UTF8 as BLU
+import Data.Binary.Put
+import System.IO
+
+-- Floating-point numbers are represented as IEEE floating-point numbers and are assumed to be little-endian, although this is not stated in documentation.
+
+-- UINT8[80]    – Header                 -     80 bytes
+-- UINT32       – Number of triangles    -      4 bytes
+
+-- foreach triangle                      - 50 bytes:
+--     REAL32[3] – Normal vector             - 12 bytes
+--     REAL32[3] – Vertex 1                  - 12 bytes
+--     REAL32[3] – Vertex 2                  - 12 bytes
+--     REAL32[3] – Vertex 3                  - 12 bytes
+--     UINT16    – Attribute byte count      -  2 bytes
+-- end
+
+header :: ByteString
+header = BLU.fromString (printf "%-80s" "polydraw" :: String)
+
+writeStlB fname = do
+    h <- openFile fname WriteMode
+    BL.hPut h header
+    hClose h
+
+
 type Vertex = V3 Double
 type Facet  = V3 Vertex
+type Mesh   = [Facet]
 
-renderStl :: [Facet] -> String
+renderStl :: Mesh -> String
 renderStl fs = "solid \n" ++ intercalate "\n" (map renderFacet fs) ++ "\nendsolid"
 
 renderFacet :: Facet -> String
@@ -36,3 +64,9 @@ normal (V3 a b c) = normalize $ cross (b - a) (c - a)
 
 normalize :: V3 Double -> V3 Double
 normalize v = v / pure ( sqrt $ sum $ v * v)
+
+translate :: V3 Double -> Mesh -> Mesh
+translate v = map (fmap (+ v))
+
+up :: Double -> Mesh -> Mesh
+up z = translate $ V3 0 0 z

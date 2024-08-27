@@ -2,7 +2,7 @@
 import Stl.Write
 import Linear.V3
 
-pyramid :: [Facet]
+pyramid :: Mesh
 pyramid = [
             V3 t u v, -- base
             V3 t u w,
@@ -18,4 +18,6 @@ pyramid = [
                   a = 50
 
 main :: IO ()
-main = writeFile "pyramid.stl" $ renderStl pyramid
+main = do
+    writeFile "pyramid.stl" $ renderStl (pyramid ++ up 25 pyramid)
+    writeStlB "binary.stl"
