@@ -5,11 +5,13 @@ import Linear.V3
 import Text.Printf
 import Data.List
 import Data.Foldable
+import Data.Int
 
 import qualified Data.ByteString.Lazy as BL
 import Data.ByteString.Lazy.UTF8 as BLU
 import Data.Binary.Put
 import System.IO
+import qualified Codec.Binary.UTF8.Generic as Da
 
 -- Floating-point numbers are represented as IEEE floating-point numbers and are assumed to be little-endian, although this is not stated in documentation.
 
@@ -27,7 +29,11 @@ import System.IO
 header :: ByteString
 header = BLU.fromString (printf "%-80s" "polydraw" :: String)
 
-writeStlB fname = do
+l :: Mesh -> Put
+l m = putInt32le $ fromIntegral $ Data.Foldable.length m
+
+
+writeStlB fname m = do
     h <- openFile fname WriteMode
     BL.hPut h header
     hClose h
@@ -48,6 +54,12 @@ renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
 
 renderVertex :: Vertex -> String
 renderVertex = unwords . toList . fmap renderDouble
+
+bFacet :: Facet -> Put
+bFacet f = foldMap bVertex f <> putInt16le 0
+
+bVertex :: Vertex -> Put
+bVertex v = foldMap (putFloatle . realToFrac) v
 
 renderDouble :: Double -> String
 renderDouble n
