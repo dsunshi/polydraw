@@ -1,6 +1,7 @@
 
 import Stl.Write
 import Linear.V3
+import qualified Data.ByteString.Lazy as B
 
 pyramid :: Mesh
 pyramid = [
@@ -20,4 +21,4 @@ pyramid = [
 main :: IO ()
 main = do
     writeFile "pyramid.stl" $ renderStl pyramid
-    writeStlB "binary.stl" pyramid
+    B.writeFile "binary.stl"  $ putStl pyramid

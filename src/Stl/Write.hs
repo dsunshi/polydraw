@@ -1,49 +1,29 @@
 
-module Stl.Write (Vertex, Facet, Mesh, translate, up, writeStlB, renderStl) where
+module Stl.Write (Vertex, Facet, Mesh, translate, up, putStl, renderStl) where
 
 import Linear.V3
 import Text.Printf
 import Data.List
 import Data.Foldable
-import Data.Int
 
-import qualified Data.ByteString.Lazy as BL
-import Data.ByteString.Lazy.UTF8 as BLU
+import qualified Data.ByteString.Lazy as B
 import Data.Binary.Put
-import System.IO
-import qualified Codec.Binary.UTF8.Generic as Da
-
--- Floating-point numbers are represented as IEEE floating-point numbers and are assumed to be little-endian, although this is not stated in documentation.
-
--- UINT8[80]    – Header                 -     80 bytes
--- UINT32       – Number of triangles    -      4 bytes
-
--- foreach triangle                      - 50 bytes:
---     REAL32[3] – Normal vector             - 12 bytes
---     REAL32[3] – Vertex 1                  - 12 bytes
---     REAL32[3] – Vertex 2                  - 12 bytes
---     REAL32[3] – Vertex 3                  - 12 bytes
---     UINT16    – Attribute byte count      -  2 bytes
--- end
-
-header :: ByteString
-header = BLU.fromString (printf "%-80s" "polydraw" :: String)
-
-l :: Mesh -> Put
-l m = putInt32le $ fromIntegral $ Data.Foldable.length m
-
-
-writeStlB :: FilePath -> Mesh -> IO ()
-writeStlB fname m = do
-    h <- openFile fname WriteMode
-    BL.hPut h header
-    BL.hPut h (runPut $ l m)
-    BL.hPut h (runPut $ bMesh m)
-    hClose h
 
 type Vertex = V3 Double
 type Facet  = V3 Vertex
 type Mesh   = [Facet]
+
+putStl :: Mesh -> B.ByteString
+putStl mesh = runPut $ header <> len <> foldMap putFacet mesh
+    where
+        header = foldMap putWord8 (replicate 80 0)
+        len    = putInt32le $ fromIntegral $ length mesh
+
+putFacet :: Facet -> Put
+putFacet f = putVertex (normal f) <> foldMap putVertex f <> putInt16le 0
+
+putVertex :: Vertex -> Put
+putVertex = foldMap (putFloatle . realToFrac)
 
 renderStl :: Mesh -> String
 renderStl fs = "solid \n" ++ intercalate "\n" (map renderFacet fs) ++ "\nendsolid"
@@ -56,15 +36,6 @@ renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
 
 renderVertex :: Vertex -> String
 renderVertex = unwords . toList . fmap renderDouble
-
-bMesh :: Mesh -> Put
-bMesh m = foldMap bFacet m
-
-bFacet :: Facet -> Put
-bFacet f = bVertex (normal f ) <> foldMap bVertex f <> putInt16le 0
-
-bVertex :: Vertex -> Put
-bVertex v = foldMap (putFloatle . realToFrac) v
 
 renderDouble :: Double -> String
 renderDouble n
