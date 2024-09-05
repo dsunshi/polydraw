@@ -33,11 +33,13 @@ l :: Mesh -> Put
 l m = putInt32le $ fromIntegral $ Data.Foldable.length m
 
 
+writeStlB :: FilePath -> Mesh -> IO ()
 writeStlB fname m = do
     h <- openFile fname WriteMode
     BL.hPut h header
+    BL.hPut h (runPut $ l m)
+    BL.hPut h (runPut $ bMesh m)
     hClose h
-
 
 type Vertex = V3 Double
 type Facet  = V3 Vertex
@@ -55,8 +57,11 @@ renderFacet f = printf "facet normal %s\n" (renderVertex $ normal f) ++
 renderVertex :: Vertex -> String
 renderVertex = unwords . toList . fmap renderDouble
 
+bMesh :: Mesh -> Put
+bMesh m = foldMap bFacet m
+
 bFacet :: Facet -> Put
-bFacet f = foldMap bVertex f <> putInt16le 0
+bFacet f = bVertex (normal f ) <> foldMap bVertex f <> putInt16le 0
 
 bVertex :: Vertex -> Put
 bVertex v = foldMap (putFloatle . realToFrac) v

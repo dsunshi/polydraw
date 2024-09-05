@@ -19,5 +19,5 @@ pyramid = [
 
 main :: IO ()
 main = do
-    writeFile "pyramid.stl" $ renderStl (pyramid ++ up 25 pyramid)
-    writeStlB "binary.stl"
+    writeFile "pyramid.stl" $ renderStl pyramid
+    writeStlB "binary.stl" pyramid
