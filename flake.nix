@@ -33,6 +33,8 @@
             haskellPackages.hoogle
             haskellPackages.fast-tags
             haskellPackages.haskell-debug-adapter
+            haskellPackages.haskell-dap
+            haskellPackages.ghci-dap
           ];
         };
       };
